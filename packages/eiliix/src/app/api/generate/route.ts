@@ -36,7 +36,8 @@ FAILSAFE:
 
 export async function POST(request: NextRequest) {
   try {
-    const { topic } = await request.json();
+    const body = await request.json() as { topic?: string };
+    const { topic } = body;
 
     if (!topic || typeof topic !== 'string') {
       return NextResponse.json(
@@ -50,8 +51,7 @@ export async function POST(request: NextRequest) {
     const mockTweet = generateMockTweet(topic);
 
     return NextResponse.json({ tweet: mockTweet });
-  } catch (error) {
-    console.error('Error generating tweet:', error);
+  } catch {
     return NextResponse.json(
       { error: 'Failed to generate tweet' },
       { status: 500 }
@@ -69,9 +69,10 @@ function generateMockTweet(topic: string): string {
     `${topic} is what happens when [cause] meets [effect]. We just gave it a fancy name.`,
   ];
   
-  const template = templates[Math.floor(Math.random() * templates.length)];
-  
   // Simple mock - in production this would be AI-generated
   return `${topic} is just organized chaos but everyone pretends they have it figured out`;
 }
+
+
+
 
